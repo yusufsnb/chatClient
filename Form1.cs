@@ -44,6 +44,9 @@ namespace chatClient
             byte[] buffer = Encoding.ASCII.GetBytes("@@" + txtNickname.Text);
             _clientSocket.Send(buffer);
             label3.Text = ("Connected to server!");
+            txtNickname.Enabled = false;
+            txtIP.Enabled = false;
+            txtPort.Enabled = false;
         }
 
         private void ReceiveData(IAsyncResult ar)
@@ -90,6 +93,27 @@ namespace chatClient
                 Console.WriteLine("receiving error," + e.Message);
             }
 
+        }
+
+        private void btnSend_Click(object sender, EventArgs e)
+        {
+            if (_clientSocket.Connected)
+            {
+                string client = "";
+                foreach (var item in listClients.SelectedItems)
+                {
+                    client = listClients.GetItemText(item);
+                    byte[] buffer = Encoding.ASCII.GetBytes(client + " :" + txtMsg.Text + "*" + txtNickname.Text);
+                    _clientSocket.Send(buffer);
+                    Thread.Sleep(20);
+
+                }
+                if (client.Equals(""))
+                    MessageBox.Show("Please select a user from list");
+                else
+                    txtMessages.AppendText("\n" + txtNickname.Text + ": " + txtMsg.Text + "\n");
+                txtMsg.Text = string.Empty;
+            }
         }
     }
 }

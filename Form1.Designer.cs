@@ -114,6 +114,7 @@
             btnSend.TabIndex = 9;
             btnSend.Text = ">";
             btnSend.UseVisualStyleBackColor = false;
+            btnSend.Click += btnSend_Click;
             // 
             // txtMsg
             // 
