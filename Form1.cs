@@ -3,6 +3,8 @@ using System.Text;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Data;
+using System.Security.Claims;
 
 namespace chatClient
 {
@@ -81,7 +83,30 @@ namespace chatClient
                             listClients.Items.RemoveAt(j);
                     }
                 }
-                else if (recvMsg.Contains("@"))
+                else if (recvMsg.Contains("filtering**")) //Filtering Mode
+                {
+                    Debug.WriteLine("Filtering Received");
+                    DataTable dt = new DataTable();/*
+                    string[] columnNames = { "From", "To", "Message" };
+                    foreach (string c in columnNames)
+                    {
+                        dt.Columns.Add(c);
+                    }*/
+
+                    string[] filterMessages = recvMsg.Split("\n");
+                    foreach (string message in filterMessages)
+                    {
+                        DataRow dr = dt.NewRow();
+                        string[] row = message.Split("\t");
+                        for (int i = 0; i < row.Length; i++)
+                        {
+                            dr[i] = row[i];
+                        }
+                        dt.Rows.Add(dr);
+                    }
+                    dataGridView1.DataSource = dt;
+                }
+                else if (recvMsg.Contains("@")) // New client added mode
                 {
                     for (int i = 0; i < listClients.Items.Count; i++)
                     {
@@ -95,11 +120,7 @@ namespace chatClient
                             listClients.Items.Add(recvMsg);
                     }
                 }
-                else if (recvMsg.Contains("filtering**"))
-                {
-
-                }
-                else
+                else // Message receiving mode
                     txtMessages.AppendText(recvMsg + "\n");
 
                 _clientSocket.BeginReceive(receivedBuf, 0, receivedBuf.Length, SocketFlags.None, new AsyncCallback(ReceiveData), _clientSocket);
