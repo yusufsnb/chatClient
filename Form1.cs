@@ -14,18 +14,28 @@ namespace chatClient
         {
             InitializeComponent();
         }
+        Thread checkConnection;
         private void Form1_Load(object sender, EventArgs e)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
+            radioButton1.Checked = true;
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            Thread t = new Thread(ConnectToServer);
-            t.Start();
+            if (!_clientSocket.Connected)
+            {
+                Thread t = new Thread(ConnectToServer);
+                t.Start();
+            }
+
         }
 
-
+        private void Check()
+        {
+            Debug.WriteLine("Connected ", _clientSocket.Connected.ToString());
+            Debug.WriteLine("Available ", _clientSocket.Available.ToString());
+        }
         private void ConnectToServer()
         {
             while (!_clientSocket.Connected)
@@ -33,6 +43,7 @@ namespace chatClient
                 try
                 {
                     _clientSocket.Connect(txtIP.Text, int.Parse(txtPort.Text));
+                    label6.Text = "Trying to connection";
                 }
                 catch (SocketException)
                 {
@@ -43,10 +54,12 @@ namespace chatClient
             _clientSocket.BeginReceive(receivedBuf, 0, receivedBuf.Length, SocketFlags.None, new AsyncCallback(ReceiveData), _clientSocket);
             byte[] buffer = Encoding.ASCII.GetBytes("@@" + txtNickname.Text);
             _clientSocket.Send(buffer);
-            label3.Text = ("Connected to server!");
+            label6.Text = ("Connected to server!");
             txtNickname.Enabled = false;
             txtIP.Enabled = false;
             txtPort.Enabled = false;
+            checkConnection = new Thread(Check);
+            checkConnection.Start();
         }
 
         private void ReceiveData(IAsyncResult ar)
@@ -82,6 +95,10 @@ namespace chatClient
                             listClients.Items.Add(recvMsg);
                     }
                 }
+                else if (recvMsg.Contains("filtering**"))
+                {
+
+                }
                 else
                     txtMessages.AppendText(recvMsg + "\n");
 
@@ -113,6 +130,19 @@ namespace chatClient
                 else
                     txtMessages.AppendText("\n" + txtNickname.Text + ": " + txtMsg.Text + "\n");
                 txtMsg.Text = string.Empty;
+            }
+        }
+
+        private void btnFilterMode_Click(object sender, EventArgs e)
+        {
+            if (_clientSocket.Connected)
+            {
+                //from filter,fromFilterVal,LastX filter,LastX filter number,Contains filter,Contains filter Val
+                byte[] buffer = Encoding.ASCII.GetBytes($"filtering** {checkSend.Checked},{radioButton1.Checked}," +
+                    $"{checkLastFilter.Checked},{numLast.Value.ToString()}," +
+                    $"{checkContainFolder.Checked},{txtContains.Text}");
+                _clientSocket.Send(buffer);
+                Thread.Sleep(20);
             }
         }
     }
