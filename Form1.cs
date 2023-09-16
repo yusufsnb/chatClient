@@ -16,7 +16,6 @@ namespace chatClient
         {
             InitializeComponent();
         }
-        Thread checkConnection;
         private void Form1_Load(object sender, EventArgs e)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -25,18 +24,9 @@ namespace chatClient
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            if (!_clientSocket.Connected)
-            {
-                Thread t = new Thread(ConnectToServer);
-                t.Start();
-            }
+            Thread t = new Thread(ConnectToServer);
+            t.Start();
 
-        }
-
-        private void Check()
-        {
-            Debug.WriteLine("Connected ", _clientSocket.Connected.ToString());
-            Debug.WriteLine("Available ", _clientSocket.Available.ToString());
         }
         private void ConnectToServer()
         {
@@ -60,8 +50,6 @@ namespace chatClient
             txtNickname.Enabled = false;
             txtIP.Enabled = false;
             txtPort.Enabled = false;
-            checkConnection = new Thread(Check);
-            checkConnection.Start();
         }
 
         private void ReceiveData(IAsyncResult ar)
@@ -86,13 +74,14 @@ namespace chatClient
                 else if (recvMsg.Contains("filtering**")) //Filtering Mode
                 {
                     Debug.WriteLine("Filtering Received");
-                    DataTable dt = new DataTable();/*
                     string[] columnNames = { "From", "To", "Message" };
+                    DataTable dt = new DataTable();
+
                     foreach (string c in columnNames)
                     {
                         dt.Columns.Add(c);
-                    }*/
-
+                    }
+                    recvMsg = recvMsg.Substring(recvMsg.IndexOf("**") + 2);
                     string[] filterMessages = recvMsg.Split("\n");
                     foreach (string message in filterMessages)
                     {

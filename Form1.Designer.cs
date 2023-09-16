@@ -53,9 +53,6 @@
             numLast = new NumericUpDown();
             radioButton2 = new RadioButton();
             btnFilterMode = new Button();
-            From = new DataGridViewTextBoxColumn();
-            To = new DataGridViewTextBoxColumn();
-            Message = new DataGridViewTextBoxColumn();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numLast).BeginInit();
@@ -207,11 +204,10 @@
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { From, To, Message });
             dataGridView1.Location = new Point(650, 125);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(358, 262);
+            dataGridView1.Size = new Size(422, 262);
             dataGridView1.TabIndex = 17;
             // 
             // checkSend
@@ -291,27 +287,12 @@
             btnFilterMode.UseVisualStyleBackColor = true;
             btnFilterMode.Click += btnFilterMode_Click;
             // 
-            // From
-            // 
-            From.HeaderText = "From";
-            From.Name = "From";
-            // 
-            // To
-            // 
-            To.HeaderText = "To";
-            To.Name = "To";
-            // 
-            // Message
-            // 
-            Message.HeaderText = "Message";
-            Message.Name = "Message";
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(1020, 392);
+            ClientSize = new Size(1084, 392);
             Controls.Add(btnFilterMode);
             Controls.Add(radioButton2);
             Controls.Add(numLast);
@@ -371,8 +352,5 @@
         private NumericUpDown numLast;
         private RadioButton radioButton2;
         private Button btnFilterMode;
-        private DataGridViewTextBoxColumn From;
-        private DataGridViewTextBoxColumn To;
-        private DataGridViewTextBoxColumn Message;
     }
 }
